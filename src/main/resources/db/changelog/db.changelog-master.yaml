@@ -1,0 +1,37 @@
+databaseChangeLog: 
+  - changeSet:  
+      id:  sql-example  
+      author:  liquibase-docs  
+      changes:  
+        - sql:  
+            sql: create table oauth_client_details (client_id varchar(255) primary key,resource_ids varchar(255),client_secret varchar(255),scope varchar(255),authorized_grant_types varchar(255),web_server_redirect_uri varchar(255),authorities varchar(255),access_token_validity integer,refresh_token_validity integer,additional_information varchar(4096),autoapprove varchar(255));
+        - sql:  
+            sql: create table oauth_client_token (token_id VARCHAR(255),token LONG VARBINARY,authentication_id VARCHAR(255) PRIMARY KEY,user_name VARCHAR(255),client_id VARCHAR(255));
+        - sql:  
+            sql: create table oauth_access_token (token_id varchar(256) default null,token blob,authentication_id varchar(256) default null,user_name varchar(256) default null,client_id varchar(256) default null,authentication blob,refresh_token varchar(256) default null);
+        - sql:  
+            sql: create table oauth_refresh_token (token_id varchar(256) default null,token blob,authentication blob);
+        - sql:  
+            sql: create table oauth_code (code varchar(255), authentication long varbinary);
+        - sql:  
+            sql: create table oauth_approvals (userid varchar(255),clientid varchar(255),scope varchar(255),status varchar(10),expiresat datetime,lastmodifiedat datetime);
+        - sql:
+            sql: create table authority (name varchar(50) not null primary key);
+        - sql:
+            sql: create table user (username varchar(50) not null primary key, email varchar(50), password varchar(500), activated boolean default false, activationkey varchar(50) default null, resetpasswordkey varchar(50) default null);
+        - sql:
+            sql: create table user_authority (username varchar(50) not null, authority varchar(50) not null, foreign key (username) references user (username), foreign key (authority) references authority (name), unique index user_authority_idx_1 (username, authority));
+        - sql:
+            sql: insert into user (username,email, password, activated) values ('piomin', 'piotr.minkowski@gmail.com', '15eefd099f840a5d278544c8eb22d6beee6b1c4725fee0184128696615b353a2', true);
+        - sql:
+            sql: insert into authority (name) values ('role_user');
+        - sql:
+            sql: insert into authority (name) values ('role_admin');
+        - sql:
+            sql: insert into user_authority (username,authority) values ('piomin', 'role_user');
+        - sql:
+            sql: insert into user_authority (username,authority) values ('piomin', 'role_admin');
+        - sql:  
+            sql: insert into `oauth_client_details` (`client_id`, `client_secret`, `scope`, `authorized_grant_types`, `access_token_validity`, `additional_information`) values ('account-service', 'secret', 'read', 'authorization_code,password,refresh_token,implicit', '900', '{}');
+        - sql:  
+            sql: insert into `oauth_client_details` (`client_id`, `client_secret`, `scope`, `authorized_grant_types`, `access_token_validity`, `additional_information`) values ('customer-service', 'secret', 'read', 'authorization_code,password,refresh_token,implicit', '900', '{}');
